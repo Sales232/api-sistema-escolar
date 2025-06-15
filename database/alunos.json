@@ -1,0 +1,9 @@
+[
+    {
+        "id_aluno": 1,
+        "nome": "Pedro Henrique",
+        "data_nascimento": "16/03/2006",
+        "cpf_pais": "089.937.031-40",
+        "endereco": "Rua 14 QD 15 LT 25"
+    }
+]
