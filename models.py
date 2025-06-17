@@ -28,8 +28,8 @@ class MatriculaAluno(BaseModel):
 class AtribuirProfessor(BaseModel):
     id_professor: int
     id_turma: int
+    
 class AlunoUpdate(BaseModel):
-    id_aluno: Optional[int]
     nome: Optional[str]
     data_nascimento: Optional[str]
     cpf_pais: Optional[str]
