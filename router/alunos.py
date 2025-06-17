@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Body
 from models import Aluno, MatriculaAluno, AlunoUpdate
 from models import salvar_dados, carregar_dados
 import json, os
@@ -24,12 +24,12 @@ def listar_alunos():
 
 
 @router.put("/{id_aluno}", tags=['Alunos'])
-def editar_aluno(id_aluno: int, dados_aluno: AlunoUpdate):
+def editar_aluno(id_aluno: int, dados_aluno: AlunoUpdate = Body()):
     alunos = carregar_dados('alunos.json') or []
     novos_alunos = []
 
     for i, aluno in enumerate(alunos):
-        if str("aluno.get"("id)) == str(id_alunos):
+        if str(aluno.get("id")) == str(id_alunos):
             alunos[i].update(dados_alunos.dict())
             salvar_dados('alunos.json', alunos)
             return {'mensagem': "Aluno atualizado com sucesso"}
@@ -38,13 +38,15 @@ def editar_aluno(id_aluno: int, dados_aluno: AlunoUpdate):
 @router.delete('/{id_aluno}', tags=['Alunos'])
 def excluir_aluno(id_aluno: int):
     alunos = carregar_dados('alunos.json') or []
-    novos_alunos = [a for a in alunos if a['id'] != id_aluno]
+    novos_alunos = [a for a in alunos if a.get('id') != id_aluno]
+    if not isinstance(id_aluno, int):
+        raise HTPPException(status_cod4=500, detail='ID inválido')
 
     if len(novos_alunos) == len(alunos):
         raise HTTPException(status_code=400, detail='Aluno não encontrado')
 
     salvar_dados('alunos.json', novos_alunos)
-    return {'mensagem:' f'Aluno {id_aluno} removido com sucesso'}
+        return {'mensagem:' f'Aluno {id_aluno} removido com sucesso'}
 
 @router.post("/matricular", tags=['Alunos'])
 def matricular_aluno(dados: MatriculaAluno):
