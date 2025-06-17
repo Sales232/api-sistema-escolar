@@ -29,7 +29,7 @@ def editar_aluno(id_aluno: int, dados_aluno: AlunoUpdate = Body()):
     for aluno in alunos: 
         if int(aluno.get('id_aluno', -1)) == id_aluno:
             dados = dados_aluno.dict(exclude_unset=True)
-            alunos.update(dados)
+            aluno.update(dados)
             salvar_dados('alunos.json', alunos)
             return {'mensagem': "Aluno atualizado com sucesso"}
     raise HTTPException(status_code=400, detail='Aluno não encontrado!')
