@@ -26,11 +26,10 @@ def listar_alunos():
 @router.put("/{id_aluno}", tags=['Alunos'])
 def editar_aluno(id_aluno: int, dados_aluno: AlunoUpdate = Body()):
     alunos = carregar_dados('alunos.json') or []
-    novos_alunos = []
-
-    for i, aluno in enumerate(alunos):
-        if isinstance(aluno, dict) and str(aluno.get("id")) == str(id_alunos):
-            alunos[i].update(dados_alunos.dict())
+    for aluno in alunos: 
+        if int(aluno.get('id_aluno', -1)) == id_aluno:
+            dados = dados_alunos.dict(exclude_unset=True)
+            alunos.update(dados)
             salvar_dados('alunos.json', alunos)
             return {'mensagem': "Aluno atualizado com sucesso"}
     raise HTTPException(status_code=400, detail='Aluno não encontrado!')
