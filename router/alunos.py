@@ -29,11 +29,11 @@ def editar_aluno(id_aluno: int, dados_aluno: AlunoUpdate = Body()):
     novos_alunos = []
 
     for i, aluno in enumerate(alunos):
-        if str(aluno.get("id")) == str(id_alunos):
+        if isinstance(aluno, dict) and str(aluno.get("id")) == str(id_alunos):
             alunos[i].update(dados_alunos.dict())
             salvar_dados('alunos.json', alunos)
             return {'mensagem': "Aluno atualizado com sucesso"}
-    raise HTTPException(status_code=400, detail='Aluno não encontrando!')
+    raise HTTPException(status_code=400, detail='Aluno não encontrado!')
                            
 @router.delete('/{id_aluno}', tags=['Alunos'])
 def excluir_aluno(id_aluno: int):
@@ -46,7 +46,7 @@ def excluir_aluno(id_aluno: int):
         raise HTTPException(status_code=400, detail='Aluno não encontrado')
 
     salvar_dados('alunos.json', novos_alunos)
-        return {'mensagem:' f'Aluno {id_aluno} removido com sucesso'}
+    return {'mensagem:' f'Aluno {id_aluno} removido com sucesso'}
 
 @router.post("/matricular", tags=['Alunos'])
 def matricular_aluno(dados: MatriculaAluno):
@@ -64,7 +64,7 @@ def matricular_aluno(dados: MatriculaAluno):
         raise HTTPException(status_code=400, detail='Turma não encontrada')
     
     for m in matriculas:
-        if m['id_aluno'] == dados.id_aluno and m['id_turma'] == dados.id_turma:
+        if m.get['id_aluno'] == dados.id_aluno and m.get['id_turma'] == dados.id_turma:
             return{'mensagem': 'Aluno já matriculado na turma'}
 
     matriculas.append({
