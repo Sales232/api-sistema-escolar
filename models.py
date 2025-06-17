@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 import json
 import os
 
@@ -27,7 +28,13 @@ class MatriculaAluno(BaseModel):
 class AtribuirProfessor(BaseModel):
     id_professor: int
     id_turma: int
-
+class AlunoUpdate(BaseModel):
+    id_aluno: Optional[int]
+    nome: Optional[str]
+    data_nascimento: Optional[str]
+    cpf_pais: Optional[str]
+    endereco: Optional[str]
+    
 # banco de dados:
 def salvar_dados(nome_arquivo, dados):
     with open(nome_arquivo, 'w', encoding='utf-8') as f:
