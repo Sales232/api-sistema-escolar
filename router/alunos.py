@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from models import Aluno, MatriculaAluno
+from models import Aluno, MatriculaAluno, AlunoUpdate
 from models import salvar_dados, carregar_dados
 import json, os
 
@@ -24,15 +24,17 @@ def listar_alunos():
 
 
 @router.put("/{id_aluno}", tags=['Alunos'])
-def editar_aluno(id_aluno: int, dados_aluno: dict):
+def editar_aluno(id_aluno: int, dados_aluno: AlunoUpdate):
     alunos = carregar_dados('alunos.json') or []
+    novos_alunos = []
 
-    for aluno in alunos:
-        if aluno['id'] == id_aluno:
-            aluno.update(dados_aluno)
+    for i, aluno in enumerate(alunos):
+        if str("aluno.get"("id)) == str(id_alunos):
+            alunos[i].update(dados_alunos.dict())
             salvar_dados('alunos.json', alunos)
             return {'mensagem': "Aluno atualizado com sucesso"}
     raise HTTPException(status_code=400, detail='Aluno não encontrando!')
+                           
 @router.delete('/{id_aluno}', tags=['Alunos'])
 def excluir_aluno(id_aluno: int):
     alunos = carregar_dados('alunos.json') or []
