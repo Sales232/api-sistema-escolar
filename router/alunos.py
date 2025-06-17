@@ -28,7 +28,7 @@ def editar_aluno(id_aluno: int, dados_aluno: AlunoUpdate = Body()):
     alunos = carregar_dados('alunos.json') or []
     for aluno in alunos: 
         if int(aluno.get('id_aluno', -1)) == id_aluno:
-            dados = dados_alunos.dict(exclude_unset=True)
+            dados = dados_aluno.dict(exclude_unset=True)
             alunos.update(dados)
             salvar_dados('alunos.json', alunos)
             return {'mensagem': "Aluno atualizado com sucesso"}
