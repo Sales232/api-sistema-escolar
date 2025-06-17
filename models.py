@@ -30,10 +30,10 @@ class AtribuirProfessor(BaseModel):
     id_turma: int
     
 class AlunoUpdate(BaseModel):
-    nome: Optional[str]
-    data_nascimento: Optional[str]
-    cpf_pais: Optional[str]
-    endereco: Optional[str]
+    nome: Optional[str] = None
+    data_nascimento: Optional[str] = None
+    cpf_pais: Optional[str] = None
+    endereco: Optional[str] = None
     
 # banco de dados:
 def salvar_dados(nome_arquivo, dados):
