@@ -12,7 +12,6 @@ app = FastAPI()
 app.include_router(alunos.router)
 app.include_router(professores.router)
 app.include_router(turmas.router)
-app.include_router(init.router)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
