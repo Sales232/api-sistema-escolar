@@ -1,0 +1,7 @@
+[project]
+name = "SISTEMA ESCOLAR - API"
+version = "0.1.1"
+description = "Em breve"
+authores = [
+    { name = "Pedro Henrique", email = "pedrohenriquenobresales9@gmail.com"}
+]

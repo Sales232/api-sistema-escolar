@@ -1,79 +1,54 @@
-from fastapi import APIRouter, HTTPException, Body
-from models import Aluno, MatriculaAluno, AlunoUpdate
-from models import salvar_dados, carregar_dados
-import json, os
+from fastapi import APIRouter, Depends, HTTPException
+from models.models import db, Aluno
+from models.models_pydantic import AlunoP, AlunoUpdate
+from models.dependencias import pegar_sessao
+from sqlalchemy.orm import Session
+from typing import List
+
 
 router = APIRouter(prefix='/alunos', tags=['Alunos'])
 
-@router.post("/", tags=['Alunos'])
-def cadastrar_alunos(aluno: Aluno):
-    alunos = carregar_dados('alunos.json') or []
-    for a in alunos:
-        if a['id'] == aluno.id:
-            raise HTTPException(status_code=400, detail='Aluno já foi cadastrado')
-
-    alunos.append(aluno.dict())
-    salvar_dados('alunos.json', alunos)
-    return {"mensagem: f' Aluno: {aluno.nome} cadastrado com sucesso!"}
-
-
-@router.get("/", tags=['Alunos'])
-def listar_alunos():
-    alunos = carregar_dados('alunos.json') or []
+@router.get("/",  tags=['Alunos'], status_code=200)
+async def listar_alunos(session: Session = Depends(pegar_sessao)):
+    alunos = session.query(Aluno).all()
     return alunos
 
-
-@router.put("/{id_aluno}", tags=['Alunos'])
-def editar_aluno(id_aluno: int, dados_aluno: AlunoUpdate = Body()):
-    alunos = carregar_dados('alunos.json') or []
-    for aluno in alunos: 
-        if int(aluno.get('id_aluno', -1)) == id_aluno:
-            dados = dados_aluno.dict(exclude_unset=True)
-            aluno.update(dados)
-            salvar_dados('alunos.json', alunos)
-            return {'mensagem': "Aluno atualizado com sucesso"}
-    raise HTTPException(status_code=400, detail='Aluno não encontrado!')
-                           
-@router.delete('/{id_aluno}', tags=['Alunos'])
-def excluir_aluno(id_aluno: int):
-    alunos = carregar_dados('alunos.json') or []
-    novos_alunos = [a for a in alunos if a.get('id') != id_aluno]
-    if not isinstance(id_aluno, int):
-        raise HTPPException(status_cod4=500, detail='ID inválido')
-
-    if len(novos_alunos) == len(alunos):
-        raise HTTPException(status_code=400, detail='Aluno não encontrado')
-
-    salvar_dados('alunos.json', novos_alunos)
-    return {'mensagem:' f'Aluno {id_aluno} removido com sucesso'}
-
-@router.post("/matricular", tags=['Alunos'])
-def matricular_aluno(dados: MatriculaAluno):
-    alunos = carregar_dados('alunos.json') or []
-    turmas = carregar_dados('turmas.json') or []
-    matriculas = carregar_dados('matriculas.json') or []
-
-    aluno_existe = any(a['id'] == dados.id_aluno for a in alunos)
-    turma_existe = any(t['id'] == dados.id_turma for t in turmas)
-
-    if not aluno_existe:
-        raise HTTPException(status_code=400, detail='Aluno não encontrado')
-
-    if not turma_existe:
-        raise HTTPException(status_code=400, detail='Turma não encontrada')
+@router.post("/", tags=['Alunos'], status_code=201)
+async def cadastrar_alunos(aluno: AlunoP, session: Session = Depends(pegar_sessao)):
+    """
+    Esta rota é a rota responsável por cadastrar seus alunos e salvar no banco de dados os alunos. Você deverá utilizar os parâmetros dê:
+    - ID do aluno: criará um ID para o aluno; deve ser um número inteiro; 
+    - NOME DO ALUNO: colocará o nome completo do respectivo aluno; deve ser um texto;
+    - DATA DE NASCIMENTO: colocará a data de nascimento do aluno; poderá utilizar as "/" (BARRAS para dividir), por isso é um texto;
+    - CPF DOS PAIS: colocará o CPF da mãe do aluno; utilizará os "." (pontos finais) para dividir, por isso é um texto;
+    - ENDEREÇO DO ALUNO: colocará o endereço do aluno, por isso é uma string. Utilize o exemplo: Rua, Quadra, Lote, cidade-estado
+   """
     
-    for m in matriculas:
-        if m.get['id_aluno'] == dados.id_aluno and m.get['id_turma'] == dados.id_turma:
-            return{'mensagem': 'Aluno já matriculado na turma'}
+    novo_aluno = Aluno(**aluno.dict())
+    session.add(novo_aluno)
+    session.commit()
+    session.refresh(novo_aluno)
+    return {'mensagem': f"Aluno {novo_aluno.nome} cadastrado com sucesso!"}
 
-    matriculas.append({
-        "id_aluno": dados.id_aluno,
-        "id_turma": dados.id_turma
-        })
-    salvar_dados('matriculas.json', matriculas)
-    return{"mensagem": f"Aluno {dados.id_aluno} matriculado na turma {dados.id_turma}"}
+@router.put('/{id}', tags=["Alunos"], response_model=List[AlunoP])
+async def editar_aluno(id_aluno: int, aluno: AlunoUpdate, session: Session = Depends(pegar_sessao)):
+    # Vai pegar o ID do aluno e filtrar
+    alunos = session.query(Aluno).filter(Aluno.id_aluno == id_aluno).first()
 
-@router.get('/matriculas',tags=['Alunos'])
-def listar_matriculas():
-    matriculas = carregar_dados('matriculas.json') or []
-    return matriculas
+    if not aluno:
+        raise HTTPException(status_code=400, detail='Aluno não encontrado')
+    # Aqui cria as medidas pro banco de dados 
+    alunos.nome = aluno.nome
+    alunos.email = aluno.email
+    alunos.data_nascimento = aluno.data_nascimento
+    alunos.cpf = aluno.cpf
+    alunos.endereco = aluno.endereco
+
+    session.commit()
+    session.refresh(alunos)
+    return [alunos]
+
+    
+  
+
+
