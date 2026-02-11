@@ -1,6 +1,6 @@
 # 📚 API Sistema Escolar
 
-Projeto criado para a disciplina de SEMINÁRIO INTEGRADOR do CENTRO UNIVERSITÁRIO DE DESENVOLVIMENTO DO CENTRO-OESTE. Uma API REST desenvolvida em Python com FastAPI para gerenciamento completo de sistemas escolares. O projeto fornece endpoints para gerenciar alunos, turmas, disciplinas, matrículas e atribuições de professores.
+Projeto criado para a disciplina de **SEMINÁRIO INTEGRADOR** do **CENTRO UNIVERSITÁRIO DE DESENVOLVIMENTO DO CENTRO-OESTE**. Uma API REST desenvolvida em Python com FastAPI para **gerenciamento completo de sistemas escolares**. O projeto fornece endpoints para gerenciar alunos, turmas, disciplinas, matrículas e atribuições de professores.
 
 ## 🎯 Funcionalidades
 
