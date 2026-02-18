@@ -150,3 +150,4 @@ Para dúvidas ou sugestões, abra uma [issue](https://github.com/Sales232/api-si
 ---
 
 **Status**: Em Desenvolvimento 🚧
+.
